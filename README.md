@@ -1,5 +1,5 @@
 # react-native-numeric-input
-a cross platform stylish numeric input for react native
+A cross platform stylish numeric input for react native. This version has some stylistic changes from the main one!
 
 <h3 align="center"><b>Visual Demo</b></h3>
 <p align="center">
