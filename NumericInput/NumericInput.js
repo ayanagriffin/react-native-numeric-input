@@ -163,9 +163,10 @@ export default class NumericInput extends Component {
         const totalWidth = this.props.totalWidth
         const totalHeight = this.props.totalHeight ? this.props.totalHeight : (totalWidth * 0.4)
         const inputWidth = this.props.type === 'up-down' ? (totalWidth * 0.6) : (totalWidth * 0.4)
-        const borderRadiusTotal = totalHeight * 0.18
-        const fontSize = totalHeight * 0.38
+        const borderRadiusTotal = totalHeight * 0.3
+        const fontSize = totalHeight * 0.5
         const textColor = this.props.textColor
+        const buttonColor = this.props.buttonColor
         const maxReached = this.state.value === this.props.maxValue
         const minReached = this.state.value === this.props.minValue
         const inputContainerStyle = this.props.type === 'up-down' ?
@@ -183,15 +184,14 @@ export default class NumericInput extends Component {
                 height: totalHeight - 2,
                 justifyContent: 'center',
                 alignItems: 'center',
-                borderWidth: 0,
-                backgroundColor: this.props.rightButtonBackgroundColor,
-                width: (totalWidth - inputWidth) / 2
+                borderWidth: 2,
+                borderColor: buttonColor,
+                backgroundColor: 'transparent',
+                width: (totalWidth - inputWidth) / 2,
+                
             },
             this.props.rounded ?
-                {
-                    borderTopRightRadius: borderRadiusTotal,
-                    borderBottomRightRadius: borderRadiusTotal
-                }
+                { borderRadius: borderRadiusTotal }
                 : {}]
         const leftButtonStyle = [
             {
@@ -201,19 +201,18 @@ export default class NumericInput extends Component {
                 height: totalHeight - 2,
                 justifyContent: 'center',
                 alignItems: 'center',
-                backgroundColor: this.props.leftButtonBackgroundColor,
+                backgroundColor: 'transparent',
                 width: (totalWidth - inputWidth) / 2,
-                borderWidth: 0
+                borderWidth: 2,
+                borderColor: buttonColor
             },
             this.props.rounded ?
-                { borderTopLeftRadius: borderRadiusTotal, borderBottomLeftRadius: borderRadiusTotal }
+                { borderRadius: borderRadiusTotal }
                 : {}]
+
         const inputWraperStyle = {
             alignSelf: 'center',
-            borderLeftColor: borderColor,
-            borderLeftWidth: sepratorWidth,
-            borderRightWidth: sepratorWidth,
-            borderRightColor: borderColor
+    
         }
         if (this.props.type === 'up-down')
             return (
@@ -221,22 +220,22 @@ export default class NumericInput extends Component {
                     <TextInput {...this.props.extraTextInputProps} editable={editable} returnKeyType='done' underlineColorAndroid='rgba(0,0,0,0)' keyboardType='numeric' value={this.state.stringValue} onChangeText={this.onChange} style={inputStyle} ref={ref => this.ref = ref} onBlur={this.onBlur} onFocus={this.onFocus} />
                     <View style={upDownStyle}>
                         <Button onPress={this.inc} style={{ flex: 1, width: '100%', alignItems: 'center' }}>
-                            <Icon name='ios-arrow-up' size={fontSize} style={[...iconStyle, maxReached ? this.props.reachMaxIncIconStyle : {}, minReached ? this.props.reachMinIncIconStyle : {}]} />
+                            <Icon name='ios-arrow-up' size={fontSize * 0.75} style={[...iconStyle, maxReached ? this.props.reachMaxIncIconStyle : {}, minReached ? this.props.reachMinIncIconStyle : {}]} />
                         </Button>
                         <Button onPress={this.dec} style={{ flex: 1, width: '100%', alignItems: 'center' }}>
-                            <Icon name='ios-arrow-down' size={fontSize} style={[...iconStyle, maxReached ? this.props.reachMaxDecIconStyle : {}, minReached ? this.props.reachMinDecIconStyle : {}]} />
+                            <Icon name='ios-arrow-down' size={fontSize  * 0.75} style={[...iconStyle, maxReached ? this.props.reachMaxDecIconStyle : {}, minReached ? this.props.reachMinDecIconStyle : {}]} />
                         </Button>
                     </View>
                 </View>)
         else return (
             <View style={inputContainerStyle}>
-                <Button onPress={this.dec} style={leftButtonStyle}>
+                <Button onPress={this.dec} style={[leftButtonStyle, maxReached ? this.props.reachMaxDecIconStyle : {}, minReached ? this.props.reachMinDecIconStyle : {}]}>
                     <Icon name='md-remove' size={fontSize} style={[...iconStyle, maxReached ? this.props.reachMaxDecIconStyle : {}, minReached ? this.props.reachMinDecIconStyle : {}]} />
                 </Button>
                 <View style={[inputWraperStyle]}>
                     <TextInput {...this.props.extraTextInputProps} editable={editable} returnKeyType='done' underlineColorAndroid='rgba(0,0,0,0)' keyboardType='numeric' value={this.state.stringValue} onChangeText={this.onChange} style={inputStyle} ref={ref => this.ref = ref} onBlur={this.onBlur} onFocus={this.onFocus} />
                 </View>
-                <Button onPress={this.inc} style={rightButtonStyle}>
+                <Button onPress={this.inc} style={[rightButtonStyle, maxReached ? this.props.reachMaxIncIconStyle : {}, minReached ? this.props.reachMinIncIconStyle : {}]}>
                     <Icon name='md-add' size={fontSize} style={[...iconStyle, maxReached ? this.props.reachMaxIncIconStyle : {}, minReached ? this.props.reachMinIncIconStyle : {}]} />
                 </Button>
             </View>)
@@ -247,15 +246,14 @@ export default class NumericInput extends Component {
 
 const style = StyleSheet.create({
     seprator: {
-        backgroundColor: 'grey',
+        backgroundColor: 'red',
         height: calcSize(80),
     },
     inputContainerUpDown: {
         flexDirection: 'row',
         alignItems: 'center',
         justifyContent: 'space-between',
-
-        borderColor: 'grey',
+        borderColor: 'transparent',
         borderWidth: 1
     },
     inputContainerPlusMinus: {
@@ -282,6 +280,7 @@ const style = StyleSheet.create({
         paddingRight: calcSize(15)
     }
 })
+
 NumericInput.propTypes = {
     iconSize: PropTypes.number,
     borderColor: PropTypes.string,
@@ -293,6 +292,7 @@ NumericInput.propTypes = {
     valueType: PropTypes.oneOf(['real', 'integer']),
     rounded: PropTypes.any,
     textColor: PropTypes.string,
+    buttonColor: PropTypes.string,
     containerStyle: PropTypes.any,
     inputStyle: PropTypes.any,
     initValue: PropTypes.number,
@@ -314,13 +314,14 @@ NumericInput.propTypes = {
 }
 NumericInput.defaultProps = {
     iconSize: calcSize(30),
-    borderColor: '#d4d4d4',
+    borderColor: 'transparent',
     iconStyle: {},
     totalWidth: calcSize(220),
     sepratorWidth: 1,
     type: 'plus-minus',
     rounded: false,
     textColor: 'black',
+    buttonColor: 'black',
     containerStyle: {},
     inputStyle: {},
     initValue: null,
